@@ -1,21 +1,48 @@
 ---
-title: 'Seminar 6: RNA-seq preprocessing - BAM files to count tables'
-author: Keegan Korthauer
-date: (4 February 2021)
+title: 'STAT540 - Seminar 6: RNA-seq preprocessing - BAM files to count tables'
 output: 
   github_document
 ---
 
+## Attributions
+
+This seminar was developed by Keegan Korthauer
+
+
 # Overview
 
-This seminar focuses on a portion of the upstream preprocessing of RNA-seq: going from aligned reads (BAM files) to count tables that will be used in differential expression analysis. Note that we are skipping the step of going from raw reads (fastq files) to aligned reads (BAM files), as this is outside the scope of this course. Refer to the lecture materials on High-dimensional genomics assays & data for details and resources.
+This seminar focuses on a portion of the upstream preprocessing of RNA-seq: going from aligned reads (BAM files) to count tables that will be used in differential expression analysis. Note that we are skipping the step of going from raw reads (fastq files) to aligned reads (BAM files), as this is outside the scope of this course. Refer to the lecture materials on High-dimensional genomics assays & data for high-level details and resources.
 
 In order to use RNA-Seq data for the purposes of differential expression analysis, we need to obtain an expression value for each gene (or transcript). The digital nature of RNA-seq data allows us to use the number of reads (an integer count) which align to a specific feature (gene or transcript) as its expression value. In this seminar, we will explore how to use BAM (or SAM) files to generate a count table of reads aligning to the human transcriptome.
 
 By the end of this seminar, you should be able to:
 
--  use the [`Rsamtools`](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html) package to **sort and index a BAM file**
--  use the [`Rsubread`](https://bioconductor.org/packages/release/bioc/html/Rsubread.html) package to **count the number of reads that align to each gene/transcript**
+- use the [`Rsamtools`](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html) package to **sort and index a BAM file**
+- use the [`Rsubread`](https://bioconductor.org/packages/release/bioc/html/Rsubread.html) package to **count the number of reads that align to each gene/transcript**
+- extract raw counts from the output of `featureCounts`, and calculate normalized expression units using the `cpm()` and `rpkm()` functions in `edgeR`
+
+
+# Loading libraries
+
+Before we begin, we'll need to load the necessary R packages for this seminar. It is likely you don't already have all of these installed on your machine unless you've done a similar analysis in the past. If this is the case, you'll need to run this code chunk to install them (currently set to `eval = FALSE`):
+
+```{r, eval=FALSE}
+library(BiocManager)
+install(c("Rsamtools", "Rsubread", "RNAseqData.HNRNPC.bam.chr14", "edgeR"))
+```
+
+After they are successfully installed, we'll load them for use in our session.
+
+```{r, message = FALSE}
+library(Rsamtools)
+library(Rsubread)
+library(RNAseqData.HNRNPC.bam.chr14)
+library(ggplot2)
+theme_set(theme_bw())
+library(dplyr)
+library(edgeR)
+library(testthat)
+```
 
 # BAM/SAM - Aligned Sequence data format
 
@@ -33,35 +60,13 @@ In this tutorial, we are working with an already aligned BAM file, but the raw r
 
 # RNA-seq upstream analysis pipeline
 
-In this tutorial we will only be dealing with a portion of the RNA-seq analysis pipeline. Here is an overview of the entire pipeline (image source: [Yang & Kim 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/)). Note that this figure is simplistic in its depiction of downstream analysis - differential expression is **not** the only downstream analysis in typical experiments. For example, we'll learn about things like gene set enrichment analysis later in the course. 
+In this tutorial we will only be dealing with a portion of the RNA-seq analysis pipeline. Here is an overview of the entire pipeline (image source: [Yang & Kim 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/)). Note that this figure is simplistic in its depiction of downstream analysis - differential expression is **not** the only downstream analysis in typical experiments. For example, we'll learn about things like gene network and enrichment analyses, clustering, and supervised learning later in the course. 
 
 ![Typical workflow for RNA sequencing data analysis (Yang & Kim 2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/bin/gni-13-119-g001.jpg)
 
 As you can see, there are many steps to go from the raw reads to the aligned bam files (red to light blue). These have been done for us in this example, as we are making use of the aligned data in the Bioconductor package [RNAseqData.HNRNPC.bam.chr14](http://bioconductor.org/packages/release/data/experiment/html/RNAseqData.HNRNPC.bam.chr14.html). Briefly, this package has preprocessed the data from [Zarnack et al. 2012](http://europepmc.org/article/MED/23374342). The reads (paired-end) were aligned to the full human genome (version hg19) with TopHat2. In addition, the data have been subset to only include reads mapped to Chromosome 14. This will reduce the computational time for our tutorial compared to running on the entire genome.
 
 **In this tutorial, we are only going to deal with the dark blue box: "Expression Quantification". Specifically, we are going to learn how to convert a SAM/BAM alignment file to a count table that can be used for differential expression analysis. Along the way, we will learn more about the SAM and BAM files.**
-
-# Loading libraries
-
-Before we begin, we'll need to load the necessary R packages for this seminar. It is likely you don't already have all of these installed on your machine - if this is true, you'll need to run this code chunk to install them (currently set to `eval = FALSE`):
-
-```{r, eval=FALSE}
-library(BiocManager)
-install("Rsamtools")
-install("Rsubread")
-install("RNAseqData.HNRNPC.bam.chr14")
-```
-
-After they are successfully installed, we'll load them for use in our session.
-
-```{r, message = FALSE}
-library(Rsamtools)
-library(Rsubread)
-library(RNAseqData.HNRNPC.bam.chr14)
-library(ggplot2)
-theme_set(theme_bw())
-library(dplyr)
-```
 
 # Viewing BAM files 
 
@@ -70,6 +75,7 @@ The first thing we are going to do is look at the alignment file, so we can lear
 ```{r}
 RNAseqData.HNRNPC.bam.chr14_BAMFILES
 ```
+
 We can see we have 8 BAM files. We'll use sample ERR127306, which we can determine from the [data repository](https://www.ebi.ac.uk/ena/browser/view/PRJEB3048) is a control HeLa sample. 
 
 ```{r}
@@ -160,7 +166,7 @@ This type of alignment file can be downloaded from a database such as [Gencode](
 Now we're ready to apply the `featureCounts` function that will do the counting of reads over genes. Note that this step can take a while if we have a large BAM file. We specify `isPairedEnd = TRUE` since as we mentioned above our sequencing protocol generated paired end reads. We also specify `strandSpecific = 1` to indicate that our sequencing protocol was stranded.
 
 ```{r}
-counts <- featureCounts(bamfile,
+genecounts <- featureCounts(bamfile,
                         annot.inbuilt = "hg19",
                         isPairedEnd = TRUE,
                         strandSpecific = 1)
@@ -172,7 +178,7 @@ You can change other options, such as the `minMQS`, the minimum mapping quality 
 Let's take a peek at the output.
 
 ```{r}
-str(counts)
+str(genecounts)
 ```
 
 It looks like the counts are stored in the `counts` slot and the gene annotation is stored in the `annotation` slot. There are also a couple more slots for experiment metadata (`targets` has sample name, and `stat` contains some stats about our BAM file).
@@ -180,21 +186,21 @@ It looks like the counts are stored in the `counts` slot and the gene annotation
 Let's take a peek at the count table, subsetted for genes on chromosome 14 (since our bam file was subsetted to reads mapping to chr 14).
 
 ```{r}
-chr14 <- which(grepl("chr14", counts$annotation$Chr))
+chr14 <- which(grepl("chr14", genecounts$annotation$Chr))
 str(chr14)
-head(counts$counts[chr14,])
-sum(counts$counts[chr14,] > 0)
-sum(counts$counts[-chr14,] > 0)
+head(genecounts$counts[chr14,])
+sum(genecounts$counts[chr14,] > 0)
+sum(genecounts$counts[-chr14,] > 0)
 ```
 
-Looks like there are `r length(chr14)` genes on chromosome 14, `r sum(counts$counts[chr14,] > 0)` of which have non-zero expression. And as we expected, no genes on any other chromosomes have any counts.
+Looks like there are `r length(chr14)` genes on chromosome 14, `r sum(genecounts$counts[chr14,] > 0)` of which have non-zero expression. And as we expected, no genes on any other chromosomes have any counts.
 
 Note that the gene IDs are RefSeq IDs. If we'd like to convert them to another ID, such as Hugo symbols or Ensembl IDs, we can use things like the [`biomaRt`](https://bioconductor.org/packages/release/bioc/html/biomaRt.html) package, or annotation packages specific to the organism we are dealing with (e.g. for human: [`org.Hs.eg.db`](https://www.bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html))
 
 Let's look at a density of expression of the chr14 genes (log-transformed).
 
 ```{r, fig.align = 'center'}
-data.frame(count = counts$counts[chr14,]) %>%
+data.frame(count = genecounts$counts[chr14,]) %>%
   ggplot(aes(x = count + 1)) +
     geom_density() +
     scale_x_log10()
@@ -203,8 +209,8 @@ data.frame(count = counts$counts[chr14,]) %>%
 We can save the count table to a text file for importing into future R sessions for downstream analysis (such as with [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) or [`edgeR`](https://bioconductor.org/packages/release/bioc/html/edgeR.html). We also include a column for gene length, since we might want to use this to obtain quantities like RPKM.
 
 ```{r}
-write.table(data.frame(counts$annotation[,c("GeneID","Length")],
-                       counts$counts),
+write.table(data.frame(genecounts$annotation[,c("GeneID","Length")],
+                       genecounts$counts),
             file = "hela_counts.txt", quote = FALSE, sep = "\t", row.names = FALSE)
 ```
 
@@ -217,10 +223,33 @@ file.remove("hela_sorted.bam.bai")
 file.remove("hela_counts.txt")
 ```
 
-# Take home exercise
+# Exercise - Not marked
 
 Now we have a table that summarizes the number of reads that align to each transcript. The is the perfect input to use for methods mentioned above like [`DESeq2`](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)  and [`edgeR`](https://bioconductor.org/packages/release/bioc/html/edgeR.html), whose algorithm requires reads be in integer counts, not normalized by library size. For visualization purposes, however, it may be helpful to use reads that are normalized first.
 
-Your take home exercise is to convert the existing count data into Counts per Million (CPM) and/or Reads Per Kilobase per Million mapped reads (RPKM) as defined by Bo Li et al in [this paper](https://academic.oup.com/bioinformatics/article/26/4/493/243395/RNA-Seq-gene-expression-estimation-with-read). Hint: check out the `cpm` and `rpkm` functions in the `edgeR` package.
+Your exercise is to convert the existing count data into Counts per Million (CPM) and Reads Per Kilobase per Million mapped reads (RPKM) as defined by Bo Li et al. in [this paper](https://academic.oup.com/bioinformatics/article/26/4/493/243395/RNA-Seq-gene-expression-estimation-with-read). 
 
-This take home exercise will not be graded. 
+Hint: check out the `cpm` and `rpkm` functions in the `edgeR` package. Format each of your answers as a numeric matrix of values.
+
+Note that there is no deliverable to turn in for a mark in this seminar.
+
+```{r}
+# your code here
+CPM <- "FILL_THIS_IN"
+
+RPKM <- "FILL_THIS_IN"
+```
+
+This next code chunk will test whether you have correctly calculated CPM and RPKM in the previous chunk. The answers are hidden as an encrypted hash, but the function will return Test passed if it matches. Note that it assumes your answers are each formatted as a numeric matrix. 
+
+```{r, error = TRUE}
+test_that("Calculation of CPM:", {
+          local_edition(2)
+          expect_known_hash(CPM, "7b444ec637e82962a409bf283704fed5")
+})
+
+test_that("Calculation of RPKM:", {
+          local_edition(2)
+          expect_known_hash(RPKM, "16547a066c56abe9ee28f02f59042a89")
+})
+```
