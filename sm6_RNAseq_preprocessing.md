@@ -160,21 +160,21 @@ RNAseqData.HNRNPC.bam.chr14_BAMFILES
 ```
 
     ##                                                                                                                ERR127306 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
     ##                                                                                                                ERR127307 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
     ##                                                                                                                ERR127308 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
     ##                                                                                                                ERR127309 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
     ##                                                                                                                ERR127302 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
     ##                                                                                                                ERR127303 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
     ##                                                                                                                ERR127304 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
     ##                                                                                                                ERR127305 
-    ## "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
+    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
 
 We can see we have 8 BAM files. We’ll use sample ERR127306, which we can
 determine from the [data
@@ -291,8 +291,8 @@ bamFile
 ```
 
     ## class: BamFile 
-    ## path: /Library/Frameworks/R.framework/Versions/4.1/Resour.../ERR127306_chr14.bam
-    ## index: /Library/Frameworks/R.framework/Versions/4.1/R.../ERR127306_chr14.bam.bai
+    ## path: /Library/Frameworks/R.framework/Versions/4.2/Resour.../ERR127306_chr14.bam
+    ## index: /Library/Frameworks/R.framework/Versions/4.2/R.../ERR127306_chr14.bam.bai
     ## isOpen: FALSE 
     ## yieldSize: NA 
     ## obeyQname: FALSE 
@@ -429,7 +429,7 @@ genecounts <- featureCounts(bamfile,
     ##             ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
     ##               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
     ##         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
-    ##        Rsubread 2.8.1
+    ##        Rsubread 2.12.3
     ## 
     ## //========================== featureCounts setting ===========================\\
     ## ||                                                                            ||
@@ -578,7 +578,7 @@ file.remove("hela_sorted.bam.bai")
 file.remove("hela_counts.txt")
 ```
 
-# Exercise - Not marked
+# Deliverable
 
 Now we have a table that summarizes the number of reads that align to
 each transcript. The is the perfect input to use for methods mentioned
@@ -597,8 +597,6 @@ paper](https://academic.oup.com/bioinformatics/article/26/4/493/243395/RNA-Seq-g
 
 Hint: check out the `cpm` and `rpkm` functions in the `edgeR` package.
 Format each of your answers as a numeric matrix of values.
-
-Note that there is no deliverable to turn in for a mark in this seminar.
 
 ``` r
 # your code here
@@ -619,10 +617,11 @@ test_that("Calculation of CPM:", {
 })
 ```
 
-    ## ── Failure (<text>:3:11): Calculation of CPM: ──────────────────────────────────
+    ## ── Failure: Calculation of CPM: ────────────────────────────────────────────────
     ## Value hashes to 917adccf7b1791212ddff570523f2736, not 7b444ec637e82962a409bf283704fed5
 
-    ## Error: Test failed
+    ## Error:
+    ## ! Test failed
 
 ``` r
 test_that("Calculation of RPKM:", {
@@ -631,7 +630,8 @@ test_that("Calculation of RPKM:", {
 })
 ```
 
-    ## ── Failure (<text>:8:11): Calculation of RPKM: ─────────────────────────────────
+    ## ── Failure: Calculation of RPKM: ───────────────────────────────────────────────
     ## Value hashes to 917adccf7b1791212ddff570523f2736, not 16547a066c56abe9ee28f02f59042a89
 
-    ## Error: Test failed
+    ## Error:
+    ## ! Test failed
