@@ -25,16 +25,16 @@ aligning to the human transcriptome.
 
 By the end of this seminar, you should be able to:
 
--   use the
-    [`Rsamtools`](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html)
-    package to **sort and index a BAM file**
--   use the
-    [`Rsubread`](https://bioconductor.org/packages/release/bioc/html/Rsubread.html)
-    package to **count the number of reads that align to each
-    gene/transcript**
--   extract raw counts from the output of `featureCounts`, and calculate
-    normalized expression units using the `cpm()` and `rpkm()` functions
-    in `edgeR`
+- use the
+  [`Rsamtools`](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html)
+  package to **sort and index a BAM file**
+- use the
+  [`Rsubread`](https://bioconductor.org/packages/release/bioc/html/Rsubread.html)
+  package to **count the number of reads that align to each
+  gene/transcript**
+- extract raw counts from the output of `featureCounts`, and calculate
+  normalized expression units using the `cpm()` and `rpkm()` functions
+  in `edgeR`
 
 # Loading libraries
 
@@ -54,14 +54,45 @@ session.
 
 ``` r
 library(Rsamtools)
+```
+
+    ## Warning: package 'GenomeInfoDb' was built under R version 4.3.3
+
+    ## Warning: package 'S4Vectors' was built under R version 4.3.2
+
+    ## Warning: package 'Biostrings' was built under R version 4.3.3
+
+``` r
 library(Rsubread)
+```
+
+    ## Warning: package 'Rsubread' was built under R version 4.3.2
+
+``` r
 library(RNAseqData.HNRNPC.bam.chr14)
 library(ggplot2)
+```
+
+    ## Warning: package 'ggplot2' was built under R version 4.3.2
+
+``` r
 theme_set(theme_bw())
 library(dplyr)
+```
+
+    ## Warning: package 'dplyr' was built under R version 4.3.2
+
+``` r
 library(edgeR)
+```
+
+    ## Warning: package 'edgeR' was built under R version 4.3.2
+
+``` r
 library(testthat)
 ```
+
+    ## Warning: package 'testthat' was built under R version 4.3.3
 
 # BAM/SAM - Aligned Sequence data format
 
@@ -124,8 +155,13 @@ typical experiments. For example, we’ll learn about things like gene
 network and enrichment analyses, clustering, and supervised learning
 later in the course.
 
-![Typical workflow for RNA sequencing data analysis (Yang & Kim
-2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/bin/gni-13-119-g001.jpg)
+<figure>
+<img
+src="https://raw.githubusercontent.com/STAT540-UBC/seminar-06/refs/heads/main/sm6_RNAseq_preprocessing_files/gni-13-119-g001.jpg"
+alt="Typical workflow for RNA sequencing data analysis (Yang &amp; Kim 2015)" />
+<figcaption aria-hidden="true">Typical workflow for RNA sequencing data
+analysis (Yang &amp; Kim 2015)</figcaption>
+</figure>
 
 As you can see, there are many steps to go from the raw reads to the
 aligned bam files (red to light blue). These have been done for us in
@@ -159,22 +195,22 @@ object `RNAseqData.HNRNPC.bam.chr14_BAMFILES`.
 RNAseqData.HNRNPC.bam.chr14_BAMFILES
 ```
 
-    ##                                                                                                                ERR127306 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
-    ##                                                                                                                ERR127307 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
-    ##                                                                                                                ERR127308 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
-    ##                                                                                                                ERR127309 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
-    ##                                                                                                                ERR127302 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
-    ##                                                                                                                ERR127303 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
-    ##                                                                                                                ERR127304 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
-    ##                                                                                                                ERR127305 
-    ## "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
+    ##                                                                                                   ERR127306 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
+    ##                                                                                                   ERR127307 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
+    ##                                                                                                   ERR127308 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
+    ##                                                                                                   ERR127309 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
+    ##                                                                                                   ERR127302 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
+    ##                                                                                                   ERR127303 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
+    ##                                                                                                   ERR127304 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
+    ##                                                                                                   ERR127305 
+    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
 
 We can see we have 8 BAM files. We’ll use sample ERR127306, which we can
 determine from the [data
@@ -188,7 +224,9 @@ bamfile <- RNAseqData.HNRNPC.bam.chr14_BAMFILES[grepl("ERR127306",
 
 This file is not human readable, so we are going to convert it into a
 SAM file, which we can read. The `asSam` function converts BAM files to
-SAM files. We’ll save a SAM file to the current working directory.
+SAM files. The argument `destination =` will specify the name of the
+newly created SAM file. We’ll save a SAM file to the current working
+directory.
 
 ``` r
 asSam(bamfile, destination = "hela")
@@ -246,11 +284,13 @@ structure of the files you are working with.
 
 In order to be able to do things like extract reads that align to a
 certain chromosome, or that map to a certain genomic region, we need to
-have a BAM file index. In this example dataset, one has already been
-generated for us. But for illustration we’ll review how to create one.
-To do this, we first have to sort the file. We can do this using the
-following command to sort our BAM file by chromosome and positions of
-each read:
+have a BAM file index. The index acts as a table of contents so that
+tools can quickly jump to parts of the BAM file without having to look
+through all of the sequences. In this example dataset, one has already
+been generated for us. But for illustration we’ll review how to create
+one. To do this, we first have to sort the file. We can do this using
+the following command to sort our BAM file by chromosome and positions
+of each read:
 
 ``` r
 sortBam(bamfile, destination="hela_sorted")
@@ -260,7 +300,7 @@ sortBam(bamfile, destination="hela_sorted")
 
 This generated a file ‘hela_sorted.bam’ in our current working
 directory. Once this file has been sorted, we can generate an index
-file.
+file:
 
 ``` r
 indexBam("hela_sorted.bam")
@@ -269,7 +309,7 @@ indexBam("hela_sorted.bam")
     ##       hela_sorted.bam 
     ## "hela_sorted.bam.bai"
 
-*Note: you must always sort before indexing a file*
+*Note: you must always sort before indexing a file!*
 
 # Viewing basic information about our BAM file
 
@@ -291,8 +331,8 @@ bamFile
 ```
 
     ## class: BamFile 
-    ## path: /Library/Frameworks/R.framework/Versions/4.2/Resour.../ERR127306_chr14.bam
-    ## index: /Library/Frameworks/R.framework/Versions/4.2/R.../ERR127306_chr14.bam.bai
+    ## path: C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/R.../ERR127306_chr14.bam
+    ## index: C:/Users/jjhumbug/AppData/Local/R/win-library/.../ERR127306_chr14.bam.bai
     ## isOpen: FALSE 
     ## yieldSize: NA 
     ## obeyQname: FALSE 
@@ -310,7 +350,7 @@ countBam(bamFile)
     ##   space start end width                file records nucleotides
     ## 1    NA    NA  NA    NA ERR127306_chr14.bam  800484    57634848
 
-We can see we have 800484 reads, which amounts to a total of about 5.76
+We can see we have 800484 reads, which amounts to a total of about 57.6
 million nucleotides. From this output, can you determine how long are
 our reads?
 
@@ -429,7 +469,7 @@ genecounts <- featureCounts(bamfile,
     ##             ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
     ##               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
     ##         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
-    ##        Rsubread 2.12.3
+    ##        Rsubread 2.16.1
     ## 
     ## //========================== featureCounts setting ===========================\\
     ## ||                                                                            ||

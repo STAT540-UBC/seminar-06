@@ -62,7 +62,7 @@ In this tutorial, we are working with an already aligned BAM file, but the raw r
 
 In this tutorial we will only be dealing with a portion of the RNA-seq analysis pipeline. Here is an overview of the entire pipeline (image source: [Yang & Kim 2015](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/)). Note that this figure is simplistic in its depiction of downstream analysis - differential expression is **not** the only downstream analysis in typical experiments. For example, we'll learn about things like gene network and enrichment analyses, clustering, and supervised learning later in the course. 
 
-![Typical workflow for RNA sequencing data analysis (Yang & Kim 2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4742321/bin/gni-13-119-g001.jpg)
+![Typical workflow for RNA sequencing data analysis (Yang & Kim 2015)](https://raw.githubusercontent.com/STAT540-UBC/seminar-06/refs/heads/main/sm6_RNAseq_preprocessing_files/gni-13-119-g001.jpg)
 
 As you can see, there are many steps to go from the raw reads to the aligned bam files (red to light blue). These have been done for us in this example, as we are making use of the aligned data in the Bioconductor package [RNAseqData.HNRNPC.bam.chr14](http://bioconductor.org/packages/release/data/experiment/html/RNAseqData.HNRNPC.bam.chr14.html). Briefly, this package has preprocessed the data from [Zarnack et al. 2012](http://europepmc.org/article/MED/23374342). The reads (paired-end) were aligned to the full human genome (version hg19) with TopHat2. In addition, the data have been subset to only include reads mapped to Chromosome 14. This will reduce the computational time for our tutorial compared to running on the entire genome.
 
@@ -83,11 +83,12 @@ bamfile <- RNAseqData.HNRNPC.bam.chr14_BAMFILES[grepl("ERR127306",
                                                 RNAseqData.HNRNPC.bam.chr14_BAMFILES)]
 ```
 
-This file is not human readable, so we are going to convert it into a SAM file, which we can read. The `asSam` function converts BAM files to SAM files. We'll save a SAM file to the current working directory. 
+This file is not human readable, so we are going to convert it into a SAM file, which we can read. The `asSam` function converts BAM files to SAM files. The argument `destination =` will specify the name of the newly created SAM file. We'll save a SAM file to the current working directory. 
 
 ```{r}
 asSam(bamfile, destination = "hela")
 ```
+
 We have created the file "hela.sam". We'll take a peek at the top of the header:
 
 ```{r}
@@ -104,19 +105,19 @@ You can see that each line corresponds to a single read, and each field refers t
 
 # Sorting and indexing BAM files
 
-In order to be able to do things like extract reads that align to a certain chromosome, or that map to a certain genomic region, we need to have a BAM file index. In this example dataset, one has already been generated for us. But for illustration we'll review how to create one. To do this, we first have to sort the file. We can do this using the following command to sort our BAM file by chromosome and positions of each read:
+In order to be able to do things like extract reads that align to a certain chromosome, or that map to a certain genomic region, we need to have a BAM file index. The index acts as a table of contents so that tools can quickly jump to parts of the BAM file without having to look through all of the sequences. In this example dataset, one has already been generated for us. But for illustration we'll review how to create one. To do this, we first have to sort the file. We can do this using the following command to sort our BAM file by chromosome and positions of each read:
 
 ```{r}
 sortBam(bamfile, destination="hela_sorted")
 ```
 
-This generated a file 'hela_sorted.bam' in our current working directory. Once this file has been sorted, we can generate an index file. 
+This generated a file 'hela_sorted.bam' in our current working directory. Once this file has been sorted, we can generate an index file:
 
 ```{r}
 indexBam("hela_sorted.bam")
 ```
 
-*Note: you must always sort before indexing a file*
+*Note: you must always sort before indexing a file!*
 
 # Viewing basic information about our BAM file
 
@@ -136,7 +137,7 @@ We'll pass this special reference to `countBam`, which will by default tell us h
 countBam(bamFile) 
 ```
 
-We can see we have `r countBam(bamFile)$records` reads, which amounts to a total of about `r signif(countBam(bamFile)$nucleotides/10E6, 3)` million nucleotides. From this output, can you determine how long are our reads?
+We can see we have `r countBam(bamFile)$records` reads, which amounts to a total of about `r signif(countBam(bamFile)$nucleotides/1E6, 3)` million nucleotides. From this output, can you determine how long are our reads?
 
 Next, we'll use the `quickBamFlagSummary` function to look at the different 'flags' for our reads. 
 
