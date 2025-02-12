@@ -245,11 +245,11 @@ This next code chunk will test whether you have correctly calculated CPM and RPK
 ```{r, error = TRUE}
 test_that("Calculation of CPM:", {
           local_edition(2)
-          expect_known_hash(CPM, "7b444ec637e82962a409bf283704fed5")
+          expect_known_hash(CPM, "bd95f6070ccc744c23fbfb84716a2dfc")
 })
 
 test_that("Calculation of RPKM:", {
           local_edition(2)
-          expect_known_hash(RPKM, "16547a066c56abe9ee28f02f59042a89")
+          expect_known_hash(RPKM, "ac19483318135543f96789ba6ebe6bfa")
 })
 ```

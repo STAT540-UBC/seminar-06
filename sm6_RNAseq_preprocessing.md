@@ -54,45 +54,14 @@ session.
 
 ``` r
 library(Rsamtools)
-```
-
-    ## Warning: package 'GenomeInfoDb' was built under R version 4.3.3
-
-    ## Warning: package 'S4Vectors' was built under R version 4.3.2
-
-    ## Warning: package 'Biostrings' was built under R version 4.3.3
-
-``` r
 library(Rsubread)
-```
-
-    ## Warning: package 'Rsubread' was built under R version 4.3.2
-
-``` r
 library(RNAseqData.HNRNPC.bam.chr14)
 library(ggplot2)
-```
-
-    ## Warning: package 'ggplot2' was built under R version 4.3.2
-
-``` r
 theme_set(theme_bw())
 library(dplyr)
-```
-
-    ## Warning: package 'dplyr' was built under R version 4.3.2
-
-``` r
 library(edgeR)
-```
-
-    ## Warning: package 'edgeR' was built under R version 4.3.2
-
-``` r
 library(testthat)
 ```
-
-    ## Warning: package 'testthat' was built under R version 4.3.3
 
 # BAM/SAM - Aligned Sequence data format
 
@@ -195,22 +164,22 @@ object `RNAseqData.HNRNPC.bam.chr14_BAMFILES`.
 RNAseqData.HNRNPC.bam.chr14_BAMFILES
 ```
 
-    ##                                                                                                   ERR127306 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
-    ##                                                                                                   ERR127307 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
-    ##                                                                                                   ERR127308 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
-    ##                                                                                                   ERR127309 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
-    ##                                                                                                   ERR127302 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
-    ##                                                                                                   ERR127303 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
-    ##                                                                                                   ERR127304 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
-    ##                                                                                                   ERR127305 
-    ## "C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
+    ##                                                                                                                      ERR127306 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127306_chr14.bam" 
+    ##                                                                                                                      ERR127307 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127307_chr14.bam" 
+    ##                                                                                                                      ERR127308 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127308_chr14.bam" 
+    ##                                                                                                                      ERR127309 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127309_chr14.bam" 
+    ##                                                                                                                      ERR127302 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127302_chr14.bam" 
+    ##                                                                                                                      ERR127303 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127303_chr14.bam" 
+    ##                                                                                                                      ERR127304 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127304_chr14.bam" 
+    ##                                                                                                                      ERR127305 
+    ## "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/RNAseqData.HNRNPC.bam.chr14/extdata/ERR127305_chr14.bam"
 
 We can see we have 8 BAM files. We’ll use sample ERR127306, which we can
 determine from the [data
@@ -331,8 +300,8 @@ bamFile
 ```
 
     ## class: BamFile 
-    ## path: C:/Users/jjhumbug/AppData/Local/R/win-library/4.3/R.../ERR127306_chr14.bam
-    ## index: C:/Users/jjhumbug/AppData/Local/R/win-library/.../ERR127306_chr14.bam.bai
+    ## path: /Library/Frameworks/R.framework/Versions/4.4-arm64/.../ERR127306_chr14.bam
+    ## index: /Library/Frameworks/R.framework/Versions/4.4-a.../ERR127306_chr14.bam.bai
     ## isOpen: FALSE 
     ## yieldSize: NA 
     ## obeyQname: FALSE 
@@ -469,7 +438,7 @@ genecounts <- featureCounts(bamfile,
     ##             ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
     ##               ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
     ##         ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
-    ##        Rsubread 2.16.1
+    ##        Rsubread 2.20.0
     ## 
     ## //========================== featureCounts setting ===========================\\
     ## ||                                                                            ||
@@ -501,7 +470,7 @@ genecounts <- featureCounts(bamfile,
     ## ||    Paired-end reads are included.                                          ||
     ## ||    Total alignments : 400242                                               ||
     ## ||    Successfully assigned alignments : 171267 (42.8%)                       ||
-    ## ||    Running time : 0.02 minutes                                             ||
+    ## ||    Running time : 0.01 minutes                                             ||
     ## ||                                                                            ||
     ## || Write the final count table.                                               ||
     ## || Write the read assignment summary.                                         ||
@@ -653,12 +622,12 @@ it assumes your answers are each formatted as a numeric matrix.
 ``` r
 test_that("Calculation of CPM:", {
           local_edition(2)
-          expect_known_hash(CPM, "7b444ec637e82962a409bf283704fed5")
+          expect_known_hash(CPM, "bd95f6070ccc744c23fbfb84716a2dfc")
 })
 ```
 
     ## ── Failure: Calculation of CPM: ────────────────────────────────────────────────
-    ## Value hashes to 917adccf7b1791212ddff570523f2736, not 7b444ec637e82962a409bf283704fed5
+    ## Value hashes to 917adccf7b1791212ddff570523f2736, not bd95f6070ccc744c23fbfb84716a2dfc
 
     ## Error:
     ## ! Test failed
@@ -666,12 +635,12 @@ test_that("Calculation of CPM:", {
 ``` r
 test_that("Calculation of RPKM:", {
           local_edition(2)
-          expect_known_hash(RPKM, "16547a066c56abe9ee28f02f59042a89")
+          expect_known_hash(RPKM, "ac19483318135543f96789ba6ebe6bfa")
 })
 ```
 
     ## ── Failure: Calculation of RPKM: ───────────────────────────────────────────────
-    ## Value hashes to 917adccf7b1791212ddff570523f2736, not 16547a066c56abe9ee28f02f59042a89
+    ## Value hashes to 917adccf7b1791212ddff570523f2736, not ac19483318135543f96789ba6ebe6bfa
 
     ## Error:
     ## ! Test failed
