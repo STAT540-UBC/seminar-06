@@ -617,17 +617,23 @@ RPKM <- "FILL_THIS_IN"
 This next code chunk will test whether you have correctly calculated CPM
 and RPKM in the previous chunk. The answers are hidden as an encrypted
 hash, but the function will return Test passed if it matches. Note that
-it assumes your answers are each formatted as a numeric matrix.
+it assumes your answers are each formatted as a numeric matrix (with one
+column).
 
 ``` r
 test_that("Calculation of CPM:", {
           local_edition(2)
-          expect_known_hash(CPM, "bd95f6070ccc744c23fbfb84716a2dfc")
+          expect_known_hash(round(CPM, 3), "1aaf27dc9e2203812d775a2be5963d84")
 })
 ```
 
-    ## ── Failure: Calculation of CPM: ────────────────────────────────────────────────
-    ## Value hashes to 917adccf7b1791212ddff570523f2736, not bd95f6070ccc744c23fbfb84716a2dfc
+    ## ── Error: Calculation of CPM: ──────────────────────────────────────────────────
+    ## Error in `round(CPM, 3)`: non-numeric argument to mathematical function
+    ## Backtrace:
+    ##     ▆
+    ##  1. └─testthat::expect_known_hash(round(CPM, 3), "1aaf27dc9e2203812d775a2be5963d84")
+    ##  2.   └─testthat::quasi_label(enquo(object), arg = "object")
+    ##  3.     └─rlang::eval_bare(expr, quo_get_env(quo))
 
     ## Error:
     ## ! Test failed
@@ -635,12 +641,17 @@ test_that("Calculation of CPM:", {
 ``` r
 test_that("Calculation of RPKM:", {
           local_edition(2)
-          expect_known_hash(RPKM, "ac19483318135543f96789ba6ebe6bfa")
+          expect_known_hash(round(RPKM, 3), "36af8065f3dbb3b240d1f228faec5577")
 })
 ```
 
-    ## ── Failure: Calculation of RPKM: ───────────────────────────────────────────────
-    ## Value hashes to 917adccf7b1791212ddff570523f2736, not ac19483318135543f96789ba6ebe6bfa
+    ## ── Error: Calculation of RPKM: ─────────────────────────────────────────────────
+    ## Error in `round(RPKM, 3)`: non-numeric argument to mathematical function
+    ## Backtrace:
+    ##     ▆
+    ##  1. └─testthat::expect_known_hash(round(RPKM, 3), "36af8065f3dbb3b240d1f228faec5577")
+    ##  2.   └─testthat::quasi_label(enquo(object), arg = "object")
+    ##  3.     └─rlang::eval_bare(expr, quo_get_env(quo))
 
     ## Error:
     ## ! Test failed
